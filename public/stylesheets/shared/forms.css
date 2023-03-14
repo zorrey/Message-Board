@@ -1,0 +1,161 @@
+:root{
+    --form-label-font-size: 1.5rem;
+    --form-label-font-size-sm: 1rem;
+    --form-input-border-color: hsl(var(--color-base-hue), 100%, 50%) ;
+    --form-input-border-color-light: hsl(var(--color-base-hue), 100%, 90%) ;
+    --form-input-background: hsl(var(--color-base-hue), 10%, 100%);
+    --form-input-text-color: hsl(var(--color-base-hue), 90%, 10%);
+    --color-fprm-text-light: beige;
+}
+.form-row{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    margin-bottom: 1rem;
+    column-gap:1rem;
+}
+.form-item{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-basis: 0;
+}
+.form-item > * {
+    width:100%;    
+
+}
+.no-grow{
+    flex-grow: 0; 
+    margin-left: 0;
+}
+.form-row-end {
+    justify-content: flex-end;
+}
+
+.form-item-column{
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    margin-top: 0;
+    margin-bottom: 2rem;
+}
+.form-row-preview{
+    display: flex;
+    flex-direction: row;
+}
+.field-label{
+    margin: 0;
+    padding: 0;
+}
+/* .form-item:nth-child(2){
+    margin-left: ;
+} */
+.form-item > label{
+    font-size: var(--form-label-font-size);
+    margin-bottom: .25rem;
+}
+.no-grow > label{
+    font-size: var(--form-label-font-size);
+    margin-bottom: .25rem;
+}
+.form-item input, .form-item select, .form-item textarea{
+    height: 2rem;
+    border-radius: .25rem;
+    border: 1px solid var(--form-input-border-color);
+    background-color: var(--form-input-background);
+    color:var(--form-input-text-color);
+    font-size: 1rem;
+    font-weight: normal;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    outline: 0;
+}
+
+
+
+.form-item input:focus, .form-item select:focus, .form-item textarea:focus{
+    border-color: var(--form-input-border-color-light);
+}
+.form-item textarea{
+    resize:horizontal; 
+    min-width: var(--book-cover-width);
+    min-height: calc(var(--book-cover-width) / var(--book-cover-aspect-ratio));
+} 
+.form-item select option{
+    background-color:var(--form-input-background);
+}
+
+.filepond--root {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+   
+    font-size: 0.8rem;
+    color:black;
+}
+
+.filepond--panel-root{
+    background-color: var(--form-input-background);
+    border: 1px solid var(--form-input-border-color);
+    margin-left: 0;
+}
+.filepond--drop-label{
+    color: var(--form-input-text-color);
+    margin-top: 3rem;
+}
+.filepond--file-status{
+    display: flex;
+    flex-wrap: wrap;
+    position:absolute;
+    top:40px;
+    left:-20px;
+    color: black;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: antiquewhite;
+    padding: 5px;
+}
+.filepond--file-status-sub{
+    font-size: 12px !important;
+}
+.filepond--file-status-main{
+    font-size: 12px !important;
+    opacity: 1  !important;
+}
+
+   
+
+.author-name{
+    font-size: 1.5rem;
+}
+@media only screen and (max-width: 650px)  {
+/*     .form-item > label{
+        font-size: var(--form-label-font-size-sm);
+    }
+    .form-item input, .form-item select, .form-item textarea{
+        font-size: var(--form-label-font-size-sm);;
+    }    
+    
+    .author-name{
+        font-size: var(--form-label-font-size-sm);
+    } */
+
+
+   
+}
+@media only screen and (max-width: 450px)  {
+    .form-row{
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        margin-bottom: 1rem;
+    }
+    .form-row-end {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+    
+    .form-row-preview{
+        display: flex;
+        flex-direction: column;
+    }
+
+}

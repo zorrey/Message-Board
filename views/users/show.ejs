@@ -1,0 +1,30 @@
+<h2 class="page-header" >User <%= name ?  name : "" %> </h2>
+<div>
+  <h3> Discussions posted by <%= name ?  name : "" %> </h3>
+   <%  discussions.forEach(discussion => { %>
+      <div class="form-row form-row-end btn-row">
+         <div class="form-item author-name"><%= discussion.topic %></div> 
+         <div class="btn-row">
+            <a class="btn btn-primary"  href="/discussions/<%= discussion.id %>">View</a>
+         </div> 
+         
+      </div>
+      
+   <%  }); %>
+</div>
+<div>
+   <h3> Messages posted by <%= name ?  name : "" %> </h3>
+
+<%  messages.forEach(m => { %>
+   <div class="form-row form-row-end btn-row">
+  
+      <div class="form-item author-name"><%= m.discussion.topic %></div> 
+      <div class="btn-row">
+         <%= m.text %>
+      </div> 
+       
+   </div>
+   
+<%  }); %>
+
+</div>

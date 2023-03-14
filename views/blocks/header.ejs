@@ -1,0 +1,29 @@
+<header class="page-header" >
+    <nav class="header-nav">  
+        <div class="header-row">
+            <a class="header-title" href='/'>
+                Agora
+            </a>
+            
+                <ul> 
+                    <li class="header-link"><a href="/users/register">Register</a></li>
+                    <li class="header-link"><a href="/users/login">Log in</a></li>
+                    <li class="header-link" ><%- include('logoutForm') %></li>
+                </ul>
+        </div>    
+            <ul class="locked"> 
+            <li class="header-link"><a href="/discussions">Topics</a></li>
+            <li><%- include('./userMenu') %> </li>
+                
+            <li class="header-link"><a href="/users">Users</a></li>   
+           
+
+            <!-- 
+            <li class="header-link"><a href="/messages">Messages</a></li>
+            <li class="header-link"><a href="/messages/new">Add Messages</a></li> 
+            -->
+            </ul>
+      
+    
+    </nav>
+</header>

@@ -1,0 +1,21 @@
+<% showClass = locals.loggedIn ? 'show' : '' %>
+<h2 class="page-header"  ><%= discussion.topic %></h2>
+<div>Created by: <%= name %></div>
+<div>Last updated: <%= discussion.dateActive.toLocaleString() %></div>
+<h3>Article: </h3>
+<div class="article"><%= discussion.article %></div>
+<div class="btn-hidden<%=  showClass %>">
+   <a class="btn btn-primary" href="/discussions/<%= discussion.id %>/edit">Edit</a>
+   <%- include('../blocks/deleteForm.ejs', 
+                {url: `/discussions/${discussion.id}`}) %> 
+</div>
+<%= console.log(messages) %>
+ <% if (messages.length > 0) { %>  
+    <h3 >Messages: </h3>  
+      <% messages.forEach( message => { %> 
+        <div> <%=  message.userName  %></div>
+        <div> <%=  message.dateCreated  %></div>
+        <div> <%=  message.text %></div>
+       
+    <%  } ) %>  
+    <% } %>   
