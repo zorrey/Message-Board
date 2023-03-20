@@ -16,10 +16,6 @@
       <div class="form-item author-name"><%= discussion.topic %></div> 
       <div class="btn-row">
          <a class="btn btn-primary"  href="/discussions/<%= discussion.id %>">View</a>
-         <a class="btn btn-primary"  href="/discussions/<%= discussion.id %>/edit">Edit</a>
-         <%- include('../blocks/deleteForm.ejs', { url: `/discussions/${discussion.id}`}) %>
-      </div> 
-       
-   </div>
-   
+      </div>        
+   </div>   
 <%  }); %> 

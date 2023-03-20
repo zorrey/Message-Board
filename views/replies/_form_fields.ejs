@@ -1,0 +1,7 @@
+<div>
+    <label for="text">Reply for discussion topic: <%= messagePost.discussion.topic %> </label>
+    <textarea type="text" id="topic" name="text"  placeholder="enter text here - required"  required >
+        <%= reply ? reply.text : '' %>
+    </textarea>
+    
+</div>

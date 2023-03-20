@@ -1,3 +1,4 @@
+const { name } = require('ejs')
 
 module.exports = function(app, passport) {
 
@@ -17,7 +18,7 @@ router.get("/", async (req, res) => {
         searchDiscussions.topic = new RegExp(req.query.topic, 'i')
     }
     try{
-        const allDiscussions = await Discussion.find( searchDiscussions )
+        const allDiscussions = await Discussion.find( searchDiscussions )        
         if(req.isAuthenticated()){
             loggedIn = true
             name = req.user.name
@@ -27,7 +28,7 @@ router.get("/", async (req, res) => {
             loggedIn:loggedIn,
             discussions: allDiscussions ? allDiscussions : [],
             searchDiscussions: req.query,
-            message: `${name} ` + "Welcome to Agora - the free forum!"
+            message: `${name? name: 'Guest'}, ` + "Welcome to Agora - the free forum!"
         })
     }catch(err){         
         console.log(err)
@@ -46,7 +47,7 @@ router.post('/', checkAuthenticated , async (req, res) => {
 if(!req.body.topic){
     return res.render('discussions/new', {
         discussion : new Discussion(),
-        errorMessage: "New Author not created. Field 'name' required."
+        errorMessage: "New Discussion not created. Field 'topic' required."
   })
 }else{
     const discussion = new Discussion({
@@ -58,11 +59,7 @@ if(!req.body.topic){
                         
         const newDiscussion = await discussion.save()            
       //  console.log("new discussion saved", newDiscussion)
-      res.render('users/profile', {
-        loggedIn:true,
-        name: req.user.name,
-        discussions: await Discussion.find()
-})
+      res.redirect(`/discussions/${newDiscussion.id}`)
         
     
     }catch(err){
@@ -75,22 +72,17 @@ router.get("/:id",  async (req, res) => {
 let loggedIn = false
 //console.log("req.isAuthenticated:   ", req.isAuthenticated())
 if(req.isAuthenticated()) loggedIn = true;
-    let discussion = await Discussion.findById(req.params.id)
-    let author = await User.findById(discussion.author)
-    let messages = await Message.find({discussion : req.params.id})
-console.log(messages)
+    let discussion = await Discussion.findById(req.params.id).populate('author','name')
+    let messages = await Message.find({discussion : req.params.id}).populate('user','name').populate('reply.user','name').exec()
+    //let replies = await Reply.find({discussion : req.params.id})
+//console.log(messages)
 //console.log(" discussion.author !== req.user.id",  discussion.author.toString() , req.user.id )
 
     try{
         res.render('discussions/show', {
             discussion: discussion,
             loggedIn: loggedIn,
-            name: author.name,
-            messages: messages.length == 0 ?
-                 [{text:"no messages",
-                     userName: "Nobody wrote message",
-                     dateCreated: ""
-                }] : messages
+            messages:  messages
         })
     }catch(err){
 
@@ -102,11 +94,9 @@ console.log(messages)
    // res.send(`discussion No ${req.params.id}`)
 })
 router.get("/:id/edit", checkAuthenticated, async (req, res) => {
-    //console.log('/:id/edit - req.params', req.params)
-   // console.log('/:id/edit - req.user', req.user)  
-    const discussion = await Discussion.findById(req.params.id)
-    //console.log(discussion)
-    //console.log("discussion.author.toString() !== req.user.id" , discussion.author.toString() !== req.user.id ,discussion.author.toString() , req.user.id)
+
+    const discussion = await Discussion.findById(req.params.id)    
+    if(!discussion) return res.redirect('/users/profile')
     if( discussion.author.toString() != req.user.id ){
         return res.redirect('/users/profile')
     }
@@ -118,9 +108,7 @@ router.get("/:id/edit", checkAuthenticated, async (req, res) => {
     }
  //   res.send(`edit discussion No ${req.params.id}`)
 })
-
 router.put('/:id', checkAuthenticated , async (req , res) => {
-
     let discussion
     try{ 
         discussion = await Discussion.findOneAndUpdate({_id: req.params.id},
@@ -130,14 +118,79 @@ router.put('/:id', checkAuthenticated , async (req , res) => {
             {new: true})
     res.redirect(`/discussions/${discussion.id}`) 
     }catch(e){
-        console.log( 'discussions - put - err', e )
+        //console.log( 'discussions - put - err', e )
         res.redirect('/discussions')
 
     }
    // res.send(`update discussion No ${req.params.id}`)
 })
-router.delete('/:id',(req , res) => {
-    res.send(`delete discussion No ${req.params.id}`)
+router.get('/:id/messages', (req, res) => {
+    try{
+        res.redirect(`/discussions/${req.params.id}`)
+    }catch(e){
+        console.log(e);
+        res.redirect('/')
+    }
+   
+})
+router.get('/:id/messages/new', checkAuthenticated , async (req, res) => {
+    if(!req.params.id){return res.render('users/profile', { errorMessage : "Error. Try again to post messsage."})}
+    try{
+        const discussion = await Discussion.findById(req.params.id)
+        return res.render('messages/new',
+                        {   loggedIn:true, 
+                            discussion: discussion ,
+                            post: new Message()
+                        })
+    }catch(e){
+        console.log("error-/:id/messages/new ---> ", e)
+        res.redirect(`/discussions/${req.params.id}`)
+    }
+    
+
+})
+router.post('/:id/messages', checkAuthenticated , async (req, res) => {
+
+   if(!req.params.id) return res.redirect('/discussions')
+   const newMessage = new Message({
+        text: req.body.text,
+        user: req.user.id,
+        discussion: req.params.id,
+        reply:[]
+         })
+    try{
+       await newMessage.save()
+       return res.redirect(`/discussions/${req.params.id}`)
+
+    }catch(e){
+        console.log(e)
+        res.redirect(`/discussions/${req.params.id}/messages/new`)
+    }
+
+})
+router.delete('/:id', checkAuthenticated , async (req , res) => {
+
+    let message
+    let errorMessage 
+    
+    const discussion = await Discussion.findById(req.params.id)
+    if(!discussion) {
+        errorMessage = `Error Deleting. No discussion ${discussion.topic}. `
+        return res.redirect(`/users/profile?error=${errorMessage}`) 
+    }
+    if( discussion.author.toString() != req.user.id ){
+        errorMessage = `Error Deleting. You can delete only the discussions started by you.`
+        return res.redirect(`/users/profile?error=${errorMessage}`)
+    }
+    try{
+        await Discussion.findOneAndDelete({_id: req.params.id})
+        message = "Delete Successful"
+        res.redirect(`/users/profile?message=${message}`)
+    }catch(e){
+        console.log(e)
+        res.redirect(`/users/profile?error=${e}`)
+    }
+   
 })
 
 return router

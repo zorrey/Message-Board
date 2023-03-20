@@ -1,21 +1,66 @@
+
 <% showClass = locals.loggedIn ? 'show' : '' %>
+
+
 <h2 class="page-header"  ><%= discussion.topic %></h2>
-<div>Created by: <%= name %></div>
+<div>Created by: <%= discussion.author.name %></div>
 <div>Last updated: <%= discussion.dateActive.toLocaleString() %></div>
 <h3>Article: </h3>
 <div class="article"><%= discussion.article %></div>
-<div class="btn-hidden<%=  showClass %>">
+
+<div class="btn-hidden<%=  showClass %>">   
    <a class="btn btn-primary" href="/discussions/<%= discussion.id %>/edit">Edit</a>
    <%- include('../blocks/deleteForm.ejs', 
                 {url: `/discussions/${discussion.id}`}) %> 
 </div>
-<%= console.log(messages) %>
+<a class="btn btn-primary" href="/discussions/<%= discussion.id %>/messages/new">New Message</a>
+
  <% if (messages.length > 0) { %>  
+ <% console.log('messages: ',messages.length) %>  
     <h3 >Messages: </h3>  
-      <% messages.forEach( message => { %> 
-        <div> <%=  message.userName  %></div>
-        <div> <%=  message.dateCreated  %></div>
-        <div> <%=  message.text %></div>
+      <% messages.forEach(  message => { %> 
+        <div>Message written by: <%= message.user.name %></div>
+        <div>date: <%=  message.dateCreated.toLocaleString() %></div>
+        <div class="message-post" > 
+          <p class="text-window"> <%= message.text %> </p>  
+          <button onclick="readMore(this)" >Read More</button>
+          <a class="btn btn-primary" href="/messages/<%= message.id %>/replies/new">New Reply</a>
+        </div>
+        
+        <% if ( message.reply.length > 0 ) { %> 
+          <h4>Replies:</h4>
+            <% message.reply.forEach( reply => { %>
+            <div>Reply Written by: <%= reply.user.name %></div>  
+            <div>date: <%= reply.dateCreated.toLocaleString() %></div>
+            <div class="message-post" >   
+            <p class="text-window"> <%= reply.text %></p>
+            <button onclick="readMore(this)" >Read More</button>
+            </div>
+        <%  }) %>
+        <% } %>   
        
     <%  } ) %>  
     <% } %>   
+    <%- include('../blocks/textMore') %>
+<!-- <script>
+
+  let textSmall = 100
+  let textWin = document.querySelectorAll(".text-window")
+  textWin.forEach(el=>{
+    if(el.textContent.length < textSmall){
+      el.nextElementSibling.style.display = "none"
+    } else {
+      let textDisplay = el.textContent.slice(0, textSmall)
+      let moreText = el.textContent.slice(textSmall)
+      el.innerHTML = `${textDisplay}<span class="dots">...</span><span class="hide more">${moreText}</span>`
+    }
+  })
+
+  function readMore(a){
+    let post = a.parentElement
+    post.querySelector(".dots").classList.toggle("hide")
+    post.querySelector(".more").classList.toggle("hide")
+    a.textContent == "Read More" ? a.textContent = "Read Less" :
+                                   a.textContent = "Read More"
+  }
+</script> -->

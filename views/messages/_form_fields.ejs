@@ -1,0 +1,7 @@
+<div>
+    <label for="text">Message for discussion topic: <%= locals.discussion.topic %> </label>
+    <textarea type="text" id="topic" name="text"  placeholder="enter text here - required"  required >
+        <%= post.text ? post.text : '' %>
+    </textarea>
+    
+</div>

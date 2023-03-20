@@ -1,0 +1,10 @@
+<h2>Edit User</h2>
+<form action="/users/edit?_method=PUT" method="POST">
+    <div>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required />
+    </div>
+    <%- include('_form_fields') %>
+    <a href="/users/profile">Cancel</a>
+    <button  type="submit" >Update</button>
+</form>

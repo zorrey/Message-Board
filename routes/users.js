@@ -8,7 +8,7 @@ const router= express.Router()
 const User = require('../models/user')
 const Discussion = require('../models/discussion')
 const Message = require('../models/message')
-const Reply = require('../models/Reply')
+const Reply = require('../models/reply')
 const checkAuthenticated = require('./checkAuth')
 const checkNotAuthenticated = require('./checkNotAuth')
 
@@ -29,7 +29,6 @@ router.get('/' , async (req, res) => {
     }
     try{
         const allUsers = await User.find( searchNames , { password:0, dateCreated:0, dateUpdated:0, email:0 , __v: 0} )
-console.log("all users: ", allUsers)
        // const userNames = []
 
       /*   allUsers.forEach(user => {
@@ -48,8 +47,10 @@ console.log("all users: ", allUsers)
 
 })
 
-router.get('/login', checkNotAuthenticated , (req, res) => {
-    res.render('users/login.ejs')
+router.get('/login', checkNotAuthenticated , async (req, res) => {
+    let errorMessage
+    if(req.query.message) errorMessage = req.query.error
+    res.render('users/login.ejs',{ errorMessage: errorMessage ? errorMessage : "" })
 })
 
 router.post('/login', checkNotAuthenticated , passport.authenticate('local', {
@@ -81,7 +82,6 @@ router.post("/register", checkNotAuthenticated ,async (req, res) => {
     })
     try{
         await newUser.save()
-            //console.log('newUser: ', newUser)
             res.redirect('/users/login')
         }catch(e){
             console.log(e)
@@ -99,24 +99,84 @@ router.delete('/logout' , checkAuthenticated , (req, res, next) => {
 })
 
 router.get('/profile', checkAuthenticated , async (req, res) => {
-    const user = await User.findById(req.user.id)
-    const discussions = await Discussion.find({author: req.user.id})
-    res.render('users/profile.ejs' , {loggedIn: true, 
-                                    name: user.name? user.name : "Guest" ,
-                                discussions: discussions},
-                            )
+//console.log('query--->', req.query)
+let message 
+let errorMessage
+if(req.query){
+    if(req.query.message){
+    message = req.query.message
+}
+    if(req.query.error){
+    errorMessage = req.query.error
+}}
+
+    try{        
+        const discussions = await Discussion.find({author: req.user.id})
+        const messages = await Message.find({$or: [ {user: req.user.id},{"reply.user": req.user.id}] }).populate('discussion').populate('user','name').sort({discussion:1, dateCreated:1}).exec()
+   // console.log('profile -messages: ', messages)
+        res.render('users/profile.ejs' , {
+                    loggedIn: true, 
+                    name: req.user.name? req.user.name : "Guest" ,
+                    userId: req.user.id,
+                    discussions: discussions ? discussions : [],
+                    messages: messages ? messages : [],
+                    errorMessage: errorMessage ? errorMessage :"",
+                    message: message? message : ""
+            }
+        )
+    }catch(e){
+        console.log(e)
+        res.redirect('/')
+    }
+  
+})
+
+
+router.get("/edit", checkAuthenticated , async (req, res) => {
+    let loggedIn = true
+    if(!req.user.id) return res.redirect('/users/profile?error=login_error')
+    try{
+        const email = req.user.email
+        res.render('users/edit', {email: email? email : "", loggedIn:loggedIn})
+        
+    }catch(e){
+        
+        console.log('error', e)
+        res.redirect('/')
+    }
+    //res.send(`edit page user No ${req.params.id}`)
+})
+
+router.put("/edit", checkAuthenticated , async (req, res) => {
+    let loggedIn = true
+    if(!req.user.id) return res.redirect('/users/profile?error=Error Updating')
+    const hashedPass = await bcrypt.hash(req.body.password, 10)
+    try{
+        const user = await User.findByIdAndUpdate(req.user.id, 
+            {   name: req.body.name, 
+                email: req.body.email,
+                password:hashedPass,
+                dateUpdated: new Date(),
+                loggedIn: loggedIn 
+            },
+            {new: true}
+        )
+        
+        res.redirect(`/users/profile?message=Success Updating`)
+    }catch(e){
+        console.log(e)
+        res.redirect(`/users/profile?error=Error while updating`)
+    }
+    //res.send(`edit page user No ${req.params.id}`)
 })
 
 router.get("/:id" , async (req, res) => {
     let loggedIn = false
     if(req.isAuthenticated()) loggedIn = true
     try{
-        console.log(req.params.id)
         const user = await User.findById(req.params.id, {__v:0, password:0, dateUpdated:0, dateCreated:0})
-        console.log('/:id - user: ', user)
         const discussions = await Discussion.find({author: req.params.id})
-        const messages = await Message.find({user : req.params.id}).populate('discussion').exec()
-        console.log('populated message', messages)
+        const messages = await Message.find( {$or:[{user : req.params.id} , {'reply.user': req.params.id} ]}).populate('user','name').populate('discussion', 'topic author').populate('reply.user', 'name').exec()
         res.render('users/show', {
             loggedIn:loggedIn,
             name: user.name,
@@ -126,20 +186,35 @@ router.get("/:id" , async (req, res) => {
     }catch(err){
 
         console.log('error', err)
-        res.redirect('/')
+        res.redirect(`/?error=${e}`)
 
     }
    // res.send(`user No ${req.params.id}`)
 })
-router.get("/:id/edit", checkAuthenticated , (req, res) => {
-    res.send(`edit page user No ${req.params.id}`)
-})
-router.put('/:id', checkAuthenticated  ,(req , res) => {
+
+
+/* router.put('/:id', checkAuthenticated  ,(req , res) => {
     res.send(`update user No ${req.params.id}`)
 })
-
-router.delete('/:id', checkAuthenticated  ,(req , res) => {
-    res.send(`delete user No ${req.params.id}`)
+ */
+router.delete( '/delete', checkAuthenticated  , async ( req , res ) => {
+    const user = await User.findById(req.user.id)
+    let errorMessage
+    if( !user ){
+        errorMessage = "Error. User profile/credential error."
+        return res.redirect(`/users/profile?error=${errorMessage}`)
+    }
+  
+    try{
+        await User.findOneAndDelete({ _id: req.user.id })
+        res.redirect('/?message:User Deleted')
+    }catch(e){
+        errorMessage = "Error deleting user."
+        console.log(e)
+        res.redirect(`/users/profile?error=${e}`)
+    }
+    
+    //res.send(`delete user No ${req.params.id}`)
 })
 
 

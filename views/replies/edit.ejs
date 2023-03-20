@@ -1,0 +1,6 @@
+<h2>Edit Reply</h2>
+<form action="/messages/<%= messagePost.id %>/replies/<%= reply.id %>?_method=PUT" method="POST">
+    <%- include('_form_fields') %>
+    <a href="/discussions/<%= messagePost.discussion.id %>">Cancel</a>
+    <button  type="submit" >Update</button>
+</form>

@@ -1,6 +1,17 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 //const Reply = require('./reply')
 
+const replySchema = new mongoose.Schema({
+    text: {type: String, required: true},
+    dateCreated : { type:Date,  required: true, default: Date.now },
+    dateUpdated : { type:Date,  required: true, default: Date.now },
+    reported: {type: Boolean, required: true , default: false}   ,
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
+    }
+  });
 
 
 const messageSchema = new mongoose.Schema({
@@ -28,37 +39,43 @@ const messageSchema = new mongoose.Schema({
         required: true,
         ref: 'User'
     },
-    userName: {
-        type: String,
-        required: true
-    },
     discussion: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'Discussion'
-    }
+    },
+    reply:[replySchema]
 
 })
 
-/* messageSchema.pre('findOneAndDelete', function(next){
-    let id = this.getQuery()["_id"];
-    console.log('this.id', id)
-
-    Reply.find({message: id}, (err, replies)=>{
-        console.log('messages length model pre: ', replies.length)
-        if(err){ 
-            console.log('pre - model error')
-          return  next(err)
-        }else if( replies.length > 0) {
-            console.log('messages length model pre: ', replies.length)
-         return   next(new Error('This discussion has messages'))
-        }else{
-            console.log('success discussion model pre: ', replies.length)
-          return  next()
+ messageSchema.pre('findOneAndDelete', async function(next){
+    try{ 
+        let id = this.getQuery()["_id"];
+        console.log('this.id', id)
+        const post = await Message.findById(id).exec()
+        if( post.reply.length > 0 ){
+            console.log(' replies length model pre: ', post.reply.length )
+            return next( new Error( 'This message has replies' ) )
+        } else {
+            console.log( 'success message model pre: ', post.reply.length )
+            return  next()
         }
-    })
-}) */
+    }catch(error){
+        console.log('pre - model error', error)
+        return  next( new Error('Error') )
+    }
+})
+   
 
-module.exports = mongoose.model('Message', messageSchema)
+
+
+
+
+
+
+
+       
+const Message = mongoose.model("Message", messageSchema);
+module.exports = Message
 
 

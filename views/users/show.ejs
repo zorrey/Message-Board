@@ -18,13 +18,23 @@
 <%  messages.forEach(m => { %>
    <div class="form-row form-row-end btn-row">
   
-      <div class="form-item author-name"><%= m.discussion.topic %></div> 
-      <div class="btn-row">
-         <%= m.text %>
-      </div> 
-       
+      <div class="form-item author-name"><%= m.discussion.topic %> </div> 
+         <div class="message-post">
+            <p class="text-window"> message: <%= m.text %>  </p>
+            <button onclick="readMore(this)" >Read More</button>
+         </div>       
    </div>
+  <% m.reply.forEach(r => { %>
+      <div class="form-row form-row-end btn-row">
+         <div class="form-item author-name">topic:<%= m.discussion.topic %> reply by: <%= r.user.name %></div> 
+         <div class="message-post">
+            <p class="text-window">reply:  <%= r.text %>  </p>
+            <button onclick="readMore(this)" > Read More </button>
+         </div> 
+      </div>
+<% }) %>
    
 <%  }); %>
 
 </div>
+<%- include('../blocks/textMore') %>

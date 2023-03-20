@@ -1,8 +1,12 @@
 <div>
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" required />
+    <label for="email" >Email</label>
+    <% if(locals.email){ %>
+    <input type="email" id="email" name="email" value="<%= email %>" placeholder="email required" required />
+    <% } else { %>
+    <input type="email" id="email" name="email" placeholder="email required" required />
+    <% } %>
 </div>
 <div>
     <label for="password">Password</label>
-    <input type="password" id="password" name="password" required />
+    <input type="password" id="password" name="password" required  />
 </div>

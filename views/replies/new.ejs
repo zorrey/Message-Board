@@ -1,0 +1,9 @@
+<div>Reply for message: </div>
+<div><%= messagePost.text %></div>
+<h2>New Reply</h2>
+
+<form action="/messages/<%= messagePost.id %>/replies" method="POST" >  
+    <%- include('_form_fields') %>
+    <a href="/discussions/<%= messagePost.discussion.id %>">Cancel</a>
+    <button  type="submit" >Create</button>
+</form>

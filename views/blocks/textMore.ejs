@@ -1,0 +1,21 @@
+<script>
+let textSmall = 100
+  let textWin = document.querySelectorAll(".text-window")
+  textWin.forEach(el=>{
+    if(el.textContent.length < textSmall){
+      el.nextElementSibling.style.display = "none"
+    } else {
+      let textDisplay = el.textContent.slice(0, textSmall)
+      let moreText = el.textContent.slice(textSmall)
+      el.innerHTML = `${textDisplay}<span class="dots">...</span><span class="hide more">${moreText}</span>`
+    }
+  })
+
+  function readMore(a){
+    let post = a.parentElement
+    post.querySelector(".dots").classList.toggle("hide")
+    post.querySelector(".more").classList.toggle("hide")
+    a.textContent == "Read More" ? a.textContent = "Read Less" :
+                                   a.textContent = "Read More"
+  }
+</script>

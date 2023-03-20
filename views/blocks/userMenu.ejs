@@ -1,4 +1,6 @@
 <% if(locals.loggedIn == true ) { %>
 <a href="/users/profile">Profile</a>
 <a href="/discussions/new">Add Topic</a>
+<a href="/users/edit">Profile Update</a>
+<%- include('deleteForm_noBtn', {url: '/users/delete'}) %>
 <% } %>
