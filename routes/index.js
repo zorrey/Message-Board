@@ -10,6 +10,7 @@ router.get('/', (req, res) => {
     let name
     let message
     let errorMessage
+    let isAdmin = false
     if(req.query){
         if(req.query.message) message = req.query.message
         if(req.query.error) errorMessage = req.query.error
@@ -19,10 +20,15 @@ router.get('/', (req, res) => {
     if(req.isAuthenticated()){
         loggedIn = true
         name = req.user.name
+        if(req.user.role == 'a') isAdmin = true
     }
+    
+
    // let name = "Guest"
     res.render("index" , 
-    {   loggedIn: loggedIn , name : name ? name : "Guest" ,
+    {   isAdmin: isAdmin,
+        loggedIn: loggedIn , 
+        name : name ? name : "Guest" ,
         errorMessage: errorMessage ? errorMessage :"",
         message: message ? message :""
  } ) 

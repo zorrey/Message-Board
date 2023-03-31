@@ -1,0 +1,56 @@
+
+ :root{  
+    --grid-width-replies: 250px; 
+    --text-info-sm: 0.6rem 
+} 
+
+.post{
+    background-color: white;
+    color: black;    
+    padding: 0.5rem;
+}
+.item{
+    border: 1px solid var(--form-input-border-color);
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+}
+.message{
+    display: grid;
+    background-color: var(--color-back-light-hue);
+    color: black;
+    padding: 0.5rem;
+}
+.reply{
+    background-color: var(--color-back-light);
+    color: black;
+    padding: 0.5rem;
+    width: 85%;
+    justify-self: flex-end;
+}
+.info-small{
+    padding: 0;
+    margin-bottom: 0;
+    font-size: var(--text-info-sm);
+}
+.grid{
+    display: grid;
+    gap: 0.1rem;
+    margin: 0.3rem 0 ;
+}
+.grid-column-2{
+    grid-template-columns: 40% 60%;
+}
+.grid-end{
+    justify-self: end;
+}
+.grid-row{
+    grid-template-columns: auto auto;
+    align-items: stretch;
+    gap: 0.5rem;
+    align-self: center;
+}
+.center{
+    display: flex;
+    align-items: center;
+    text-align: center;
+}

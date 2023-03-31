@@ -1,68 +1,81 @@
-<h2>Hello, <%= name ? name : "Guest" %> </h2>
-<br>
-<h3>Posted Discussions</h3> 
-<div>
+<h2>Hi, <%= name ? name : "Guest" %>. This is your profile page. </h2>
+<div class="post">
+   <h3>Posted Discussions:</h3> 
    <% if(discussions.length>0) { %>
-    <%  discussions.forEach(discussion => { %>
-        <div class="form-row form-row-end btn-row">
-           <div class="form-item author-name"><%= discussion.topic %></div> 
+    <%  discussions.forEach(discussion => { %>   
+        <div class="form-row">
+           <div class="form-item "><%= discussion.topic %></div> 
            <div class="btn-row">
               <a class="btn btn-primary"  href="/discussions/<%= discussion.id %>">View</a>
               <a class="btn btn-primary"  href="/discussions/<%= discussion.id %>/edit">Edit</a>
               <%- include('../blocks/deleteForm.ejs', { url: `/discussions/${discussion.id}`}) %>
+              <% if(discussion.reported == true){ %>
+               <div class="reported"> Reported </div>
+           <% } %>
            </div>             
         </div>
         
      <%  }); %>   
   <%   } %>
 </div>
-<h3>Posted Messages & Replies</h3>
-<div>
+
+<div class="message">
+   <h3>Posted Comments & Comments with Posted Replies</h3>
    <div>
       <% if( messages.length > 0 ) { %>
       <%  messages.forEach( post => { %>
-          <div class="form-row form-row-end btn-row">
-       <h4> Message:</h4>     
-     
-             <div class="form-item author-name">topic: <%= post.discussion.topic ? post.discussion.topic : "topic" %>
-            written by: <%= post.user.name %>
-            </div> 
-            <div class="message-post">
-               <p class="text-window"><%= post.text %></p>
-               <button onclick="readMore(this)" >Read More</button>
+         <div class="item grid">
+         <label class="s"> Comment by: <%= post.user.name %></label>   
+            <div class="info-small">topic: <%= post.discussion.topic ? post.discussion.topic : "topic" %>
+             by: <%= post.user.name %>
             </div>
-            <% if(post.user.id==userId){ %> 
-           
-               <div class="btn-row">
-                   <a class="btn btn-primary"  href="/messages/<%= post.id  %>/edit">Edit</a>
-                   <%- include('../blocks/deleteForm.ejs', { url: `/messages/${post.id}`}) %>
-               </div> 
-            <% } %>            
-          </div> 
-          <% if(post.reply.length > 0) { %>
-          <div class="form-item">
-            <% post.reply.forEach( reply => { %>
-               <% if( reply.user == userId ) { %>
-               <div>
-                  <div class="form-item author-name">Reply by: <%= name %></div> 
-                  <div class="message-post">
-                     <p class="text-window"><%= reply.text %></p>
-                     <button onclick="readMore(this)" >Read More</button>
-                  </div>
-                  <div class="btn-row">
-                     <a class="btn btn-primary"  href="/messages/<%= post.id  %>/replies/<%= reply.id%>/edit">Edit</a>
-                     <%- include('../blocks/deleteForm.ejs', { url: `/messages/${post.id}/replies/${reply.id}`}) %>
-                 </div>  
-               </div>   
-            
-
-         <%   } %>   
-         <%   }) %>   
-          </div>    
-          <% } %>     
+            <% if(post.reported == true){ %>
+               <div class="reported"> Reported </div>
+            <% } %> 
+            <div class="grid">
+               <p class="text-window"><%= post.text %></p>
+               <button class="btn-sm btn-end" onclick="readMore(this)" >Read More</button>
+               <hr>
+               <% if(post.user.id==userId){ %>            
+                  <div class="grid grid-end grid-column-2">
+                      <a class="btn btn-primary"  href="/messages/<%= post.id  %>/edit">Edit</a>
+                      <%- include('../blocks/deleteForm.ejs', { url: `/messages/${post.id}`}) %>
+                  </div> 
+               <% } %> 
+            </div>           
+            <% if(post.reply.length > 0) { %>
+            <div class="grid">
+               <div class="reply">
+              <% post.reply.forEach( reply => { %>
+                  <% if( reply.user == userId ) { %>
+                  <div class="grid">
+                     <div class="info-small">Reply by: <%= name %> </div> 
+                     <% if(reply.reported == true){ %>
+                     <div class="reported"> Reported </div>
+                     <% } %>
+                     <div class="grid">
+                       <p class="text-window"><%= reply.text %></p>
+                       <button  class="btn-sm btn-end"  onclick="readMore(this)" >Read More</button>
+                     </div>
+                     <div class="grid grid-end grid-column-2">
+                       <a class="btn btn-primary"  href="/messages/<%= post.id  %>/replies/<%= reply.id%>/edit">Edit</a>
+                       <%- include('../blocks/deleteForm.ejs', { url: `/messages/${post.id}/replies/${reply.id}`}) %>
+                     </div>  
+                  </div>   
+              
+  
+                  <%   } %>   
+               <%   }) %>   
+            </div>
+            <button class="btn-med " onclick="showReplies(this)" >Hide Replies</button>    
+            </div>   
+             
+            <% } %>     
+          </div> <!-- item grid -->
        <%  }); %>   
        <%   } %>   
   </div>
 </div>
 <%- include('../blocks/textMore') %>
+<%- include('../blocks/showReplies.ejs') %>
 

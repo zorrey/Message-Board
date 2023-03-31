@@ -6,18 +6,20 @@
          <input type="text" name="name" value="<%= searchNames.name %>" />
       </div>
    </div>
-   <div class="btn-row form-row-end"> 
+   <div class="btn-row btn-row-end"> 
       <button class="btn btn-primary" type="submit">Search</button>
    </div>
 </form>
+<br>
 <%  allUsers.forEach(user => { %>
    <div class="form-row form-row-end btn-row">
-      <div class="form-item author-name"><%= user.name %></div> 
+      <div class="form-item "><%= user.name %></div> 
       <div class="btn-row">
          <a class="btn btn-primary"  href="/users/<%= user.id %>">View</a>
       </div> 
        
    </div>
+   <hr>
    
 <%  }); %>
 

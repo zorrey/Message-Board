@@ -19,6 +19,7 @@ const messagesRouter = require("./routes/messages")
 const discussionRouter = require("./routes/discussions")
 const mainRouter = require("./routes/index")
 const userRouter = require("./routes/users")
+const adminRouter = require("./routes/admin")
 
 
 
@@ -62,6 +63,7 @@ app.use('/messages', messagesRouter(app, passport))
 
 app.use('/users', userRouter(app, passport))
 app.use('/discussions', discussionRouter(app, passport))
+app.use('/admin', adminRouter(app, passport))
 
 
 

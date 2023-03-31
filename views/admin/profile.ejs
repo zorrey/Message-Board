@@ -1,0 +1,26 @@
+<h2>Hello, <%= name %> . This is your admin page. </h2>
+<br>
+<h3> Users: </h3> 
+<div>
+   <div class="user-grid">
+      <div class="user-grid user-row">
+         <div class="user-grid cell"> ID</div>
+         <div class="user-grid cell"> Name </div>
+         <div class="user-grid cell"> Email </div>    
+         <div class="user-grid cell"> Role</div> 
+         <div class="user-grid cell"> Profile</div> 
+      </div> 
+
+   <% if(users.length>0) { %>
+    <%  users.forEach( user => { %> 
+      <div class="user-grid user-row">
+         <div class="user-grid cell"> <%= user.id %> </div>   
+         <div class="user-grid cell"> <%= user.name %> </div>
+         <div class="user-grid cell"> <%= user.email %> </div>     
+         <div class="user-grid cell"> <%= user.role %> </div>          
+         <div class="user-grid cell"> <a href="/users/profile?id=<%= user.id %>&name=<%= user.name %>"> Profile </a></div>          
+      </div>         
+     <%  }); %>  
+  <%   } %>
+</div> 
+</div>

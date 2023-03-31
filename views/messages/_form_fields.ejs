@@ -1,7 +1,9 @@
-<div>
-    <label for="text">Message for discussion topic: <%= locals.discussion.topic %> </label>
-    <textarea type="text" id="topic" name="text"  placeholder="enter text here - required"  required >
+<div class="form-item">
+    <% if(locals.post) {%>
+        <div class="info-small"> Message posted on: <%= post.dateCreated.toLocaleString() %>, Last updated on: <%= post.dateUpdated.toLocaleString() %></div>
+    <% } %>    
+    <label for="text">Message for discussion: <span class="text-medium"><%= locals.discussion.topic %></span> </label>
+    <textarea type="text" id="text" name="text"  placeholder="enter text here - required"  required >
         <%= post.text ? post.text : '' %>
-    </textarea>
-    
+    </textarea>    
 </div>

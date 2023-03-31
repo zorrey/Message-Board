@@ -1,4 +1,4 @@
-<div class="grid grid-column-2"> 
+<div>
     <label for="email" >Email</label>
     <% if(locals.email){ %>
     <input type="email" id="email" name="email" value="<%= email %>" placeholder="email required" required />
@@ -6,8 +6,7 @@
     <input type="email" id="email" name="email" placeholder="email required" required />
     <% } %>
 </div>
-<hr class="medium">    
-<div class="grid grid-column-2">
+<div>
     <label for="password">Password</label>
     <input type="password" id="password" name="password" required  />
-</div><hr class="medium">  
+</div>

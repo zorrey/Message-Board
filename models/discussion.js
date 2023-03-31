@@ -1,9 +1,11 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const Message = require('./message')
+const Reply = require('./reply')
 
 const discussionSchema = new mongoose.Schema({
     topic: {
         type: String,
+        trim:true,
         required: true
     },
     dateCreated: {
@@ -11,21 +13,28 @@ const discussionSchema = new mongoose.Schema({
         required: true,
         default: Date.now
     },
-    dateActive: {
+    dateUpdated: {
         type: Date,
         required: true,
         default: Date.now
     },
-    article: {
+    text: {
         type: String,
+        trim:true,
         required: true
     },
-    author: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
-    }
-})
+    },
+    reported: {
+        type: Boolean, 
+        required: true , 
+        default: false
+    }  
+}, { toJSON: { virtuals: true } })
+discussionSchema.set('toObject', { virtuals: true });
 
 discussionSchema.pre('findOneAndDelete', async function(next){
     try{ 
@@ -43,20 +52,36 @@ discussionSchema.pre('findOneAndDelete', async function(next){
         console.log('pre - model error', error)
         return  next(new Error('Error deleting discussion'))
     }
-   
-
-/*     Message.find({discussion: id}, (err, messages)=>{
-        console.log('messages length model pre: ', messages.length)
-        if(err){ 
-            console.log('pre - model error')
-          return  next(err)
-        }else if( messages.length > 0) {
-            console.log('messages length model pre: ', messages.length)
-         return   next(new Error('This discussion has messages'))
-        }else{
-            console.log('success discussion model pre: ', messages.length)
-          return  console.log()
-        }
-    }) */
 })
+
+discussionSchema.virtual('messages',{
+    ref: 'Message',
+    localField: '_id',
+    foreignField: 'discussion'
+}).get(async function(){
+    return await Message.find({discussion : this.id}).populate('user', 'name').populate('reply.user', 'name').exec()
+})
+
+/* discussionSchema.statics.methods.findUserPosts = async function(userId){
+    this.aggregate( [ 
+        {
+            $lookup:{
+                from: messages,
+                localField: id,
+                foreignField: discussion,
+                as: messages
+            }
+        }
+] ) */
+
+
+
+  /*   const messages = await Message
+        .find({ $or:[ {user : userId} , {'reply.user': userId} ] })
+        .populate('user','name').populate('discussion', 'topic author').populate('reply.user', 'name')
+        .sort({'discussion': 1 , dateCreated: 1}   ).exec() */
+/*         
+    return discussions
+} */
+
 module.exports = mongoose.model('Discussion', discussionSchema)

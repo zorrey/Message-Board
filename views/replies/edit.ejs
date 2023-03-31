@@ -1,6 +1,10 @@
 <h2>Edit Reply</h2>
-<form action="/messages/<%= messagePost.id %>/replies/<%= reply.id %>?_method=PUT" method="POST">
+<form class="form-item" action="/messages/<%= messagePost.id %>/replies/<%= reply.id %>?_method=PUT" method="POST">
+   
     <%- include('_form_fields') %>
-    <a href="/discussions/<%= messagePost.discussion.id %>">Cancel</a>
-    <button  type="submit" >Update</button>
+    <div class="btn-row-end">
+        <a class="btn" href="/discussions/<%= messagePost.discussion.id %>">Cancel</a>
+        <button class="btn btn-primary" type="submit" >Update</button>
+    </div>
+    
 </form>

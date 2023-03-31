@@ -5,11 +5,12 @@ const Message = require('./message')
 const Discussion = require('./discussion')
 
 const userSchema = new mongoose.Schema({
-    name: {type: String, required: true},
+    name: {type: String, required: true, unique: true  },
     dateCreated: { type:Date,  required: true, default: Date.now },
     dateUpdated: { type:Date,  required: true, default: Date.now },
-    email: {type: mongoose.SchemaTypes.Email , required: true},
-    password: {type: String, required: true }
+    email: {type: mongoose.SchemaTypes.Email , required: true, unique: true, lowercase: true },
+    password: {type: String, required: true },
+    role:{ type:String, required: true, enum:['a', 'u'], default:'u'}
   });
 
 
@@ -18,7 +19,7 @@ const userSchema = new mongoose.Schema({
     try{
     let id = this.getQuery()["_id"];
     console.log( 'this.id', id )
-    const discussions = await Discussion.find( { author: id } )
+    const discussions = await Discussion.find( { user : id } )
     const messages = await Message.find( { user: id } )
     const replies = await Message.find( { 'reply.user': id } )
     if(discussions.length > 0){
@@ -31,7 +32,7 @@ const userSchema = new mongoose.Schema({
       console.log( 'users-replies length model pre: ', replies.length )
       return   next( new Error('This user has replies') )
     }else{      
-      console.log('success users model pre: ', discussions.length , messages.length,  replies.length   )
+      console.log( 'success users model pre: ', discussions.length , messages.length,  replies.length )
       return  next()
     }
     }catch(e){

@@ -1,7 +1,13 @@
 <h2>Login</h2>
+<hr class="medium"><br>
 
-<form action="/users/login" method="POST">
+<form class="grid item log" action="/users/login" method="POST">
 <%- include('_form_fields') %>
-    <button type="submit"  >Login</button>
-</form>
-<a href="/users/register">Register</a>
+<div class="grid grid-column-2">
+    <div></div>
+    <button class="btn btn-primary" type="submit"  >Login</button>
+</div>
+</form> <br> <hr class="medium">
+<div class="form-row">
+ <a class="btn btn-primary" href="/users/register">Register</a>   
+</div>

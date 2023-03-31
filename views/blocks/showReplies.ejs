@@ -1,0 +1,9 @@
+<script>
+ 
+      function showReplies(a){
+        let replies = a.parentElement
+        replies.querySelector(".reply").classList.toggle("hide")
+        a.textContent == "View Replies" ? a.textContent = "Hide Replies" :
+                                       a.textContent = "View Replies"
+      }
+    </script>

@@ -1,0 +1,34 @@
+<h4>
+  <div>
+     <a href="/admin/unreport">Unreport All</a>
+  </div></h4>
+<h2>Issues</h2>
+<div>
+    <% if(issues.length>0) {%>
+        <% issues.forEach(issue => { %>
+            <div>
+              <div> Issue reported by:  <%= issue.reporter.name %> </div> 
+              <div> Issue Topic:  <%= issue.topic %> </div> 
+              <div> Reason:  <%= issue.reason %> </div> 
+              <h3>Reported user: <%= issue.reportedUser.name %></h3>
+            <% if(issue.docModel == 'Discussion'){ %>
+             <h4>Discussion reported: </h4>   
+             <div>Topic: <%= issue.post.topic %></div>
+            <div>Article: <%= issue.post.text %></div>
+            <%   } %> 
+            <% if(issue.type == 'Message'){ %>
+             <h4> Message reported: </h4> 
+            <div>Text: <%= issue.post.text %></div>
+            <%   } %> 
+            <% if(issue.type == 'Reply'){ %>
+            <% issue.post.reply.forEach( reply => { %> 
+              <% if(reply.reported == true){ %>
+                <h4> Reply reported: </h4> 
+                <div>Text: <%= reply.text %></div>
+              <% } %>     
+           
+            <%   } ) %> 
+            <%   } %> 
+    <%    }) %>
+    </div>
+    <% } %>

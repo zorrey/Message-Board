@@ -1,0 +1,132 @@
+module.exports = function(app, passport) {
+    require('dotenv').config()
+const express = require('express')
+const router = express.Router()
+const bcrypt = require('bcrypt')
+const User = require('../models/user')
+const Discussion = require('../models/discussion')
+const Message = require('../models/message')
+const Issue = require('../models/issue')
+const checkAuthenticated = require('./checkAuth')
+const checkNotAuthenticated = require('./checkNotAuth')
+const checkRole = require('./checkRole')
+const regExpName = new RegExp(/^[a-zA-Z0-9]+$/)
+
+
+router.get("/register", checkNotAuthenticated , async (req, res) => {
+    let message
+    let errorMessage
+    if(req.query){
+        if(req.query.message) message = req.query.message
+        if(req.query.error) errorMessage = req.query.error
+    }
+        try{
+        res.render('admin/register.ejs', 
+        {errorMessage: errorMessage ? errorMessage : "",
+        message: message ? message : ""
+    
+     })
+        }catch{
+            res.redirect(`/?message=${errorMessage}`)    
+        }
+    })
+    
+router.post("/register", checkNotAuthenticated , async (req, res) => {
+    //res.send('admin created')
+        let message
+         if(!req.body.name || !req.body.password || !req.body.email || !req.body.adminSecret){
+            return res.redirect('/admin/register')  
+        }else if( req.body.adminSecret !== process.env.ADMIN_PASS ) {
+            console.log("Admin Secret incorrect.")
+            message = "Admin Secret incorrect."
+            return res.redirect(`/admin/register?message=${message}`) 
+        }else if(!regExpName.test(req.body.name) || !regExpName.test(req.body.password) )    {
+            message = " Only letters and numbers allowed in the name and password."
+            return res.redirect(`/admin/register?message=${message}`)    
+        } else {
+        const userName = await User.find({name: req.body.name}) 
+        const userEmail = await User.find({email: req.body.email}) 
+        if(userName.length >0) { 
+            message = 'There is already a user with this name.'
+            return res.redirect(`/admin/register?message=${message}`)  
+        }
+        if(userEmail.length >0) { 
+            message = 'There is already a user with this email.'
+            return res.redirect(`/admin/register?message=${message}`)  
+        }
+        
+        const hashedPass = await bcrypt.hash(req.body.password, 10)
+        const newUser = new User({
+            name:req.body.name,
+            email:req.body.email ,
+            password: hashedPass,
+            role: 'a'
+        })
+        try{
+            await newUser.save()
+                res.redirect('/users/login')
+            }catch(e){
+                console.log(e)
+                res.redirect(`/?message=${e}`)    
+            }
+        }
+    })
+    
+router.get( '/profile' , checkAuthenticated , checkRole('a') , async ( req, res ) => {
+    let message
+    try{  
+        const users = await User.find({})   
+             
+        res.render( 'admin/profile',
+         {  users: users, 
+            name: req.user.name, 
+            isAdmin: true
+         })        
+    }catch(e){
+        res.redirect(`/?error=${e}`)
+    }
+})
+
+router.get('/check', checkAuthenticated, checkRole('a') ,  async (req, res) => {
+    let message
+    try{  
+        const issues = await Issue.find({}).populate('post').populate('reporter', 'name').populate('reportedUser', 'name').exec()
+       if(issues.length < 1) message = "Looks like there are no issues :)"
+        console.log( 'issues: ', issues )
+        res.render( 'admin/issues', {
+           isAdmin: true, 
+           issues: issues,
+           message: message ? message: ""
+        })
+    } catch(e) {
+        message = "Error while loading admin page."
+        console.log(e)
+        res.redirect(`/?message=${message + " " + e}`)
+    }
+
+})
+router.get('/unreport', checkAuthenticated, checkRole('a') , async (req , res) => {
+    console.log('cleanAll')
+
+    try{
+        await Discussion.updateMany({reported: true}, {reported: false})
+        await Message.updateMany({reported: true}, {reported: false})
+        await Message.updateMany({'reply.reported': true}, {"reply.reported": false}).exec()
+        await Issue.deleteMany({}).exec()
+        res.redirect('/admin/check')
+    }catch(e){
+        console.log(e)
+        res.redirect('/admin/check')
+    }
+} )
+router.delete('/cleanAll/:id', checkAuthenticated , checkRole('a') , async (req , res) => {
+    try{
+        res.redirect('/admin/check')
+    } catch(e) {
+        res.redirect('/admin/check')
+    }
+
+} )
+
+return router
+}

@@ -1,22 +1,23 @@
 <header class="page-header" >
     <nav class="header-nav">  
         <div class="header-row">
-            <a class="header-title" href='/'>
-                Agora
-            </a>
-            
-                <ul> 
-                    <li class="header-link"><a href="/users/register">Register</a></li>
-                    <li class="header-link"><a href="/users/login">Log in</a></li>
-                    <li class="header-link" ><%- include('logoutForm') %></li>
-                </ul>
+            <a class="header-title" href='/'> Agora  </a> 
+            <a class="right" href="/users/register">Register</a>              
+                
         </div>    
             <ul class="locked"> 
             <li class="header-link"><a href="/discussions">Topics</a></li>
             <li class="header-link"><a href="/users">Users</a></li> 
-            <li><%- include('./userMenu') %> </li>
-                
-              
+            <li class="header-link" > 
+                   <% if(locals.loggedIn) {%>
+                <a class="dd-link" href="/discussions/new">Add Topic</a>
+            <% } %>  
+            </li>
+           
+            <li class="dropdown">
+                <button class="no-btn right">Profile</button>
+                <%- include('./userMenu') %> 
+            </li>
            
 
             <!-- 

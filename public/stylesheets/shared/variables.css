@@ -1,10 +1,15 @@
 :root{
-    --color-base-hue:220;
-    --color-back-dark: hsl(var(--color-base-hue), 20%, 9%);
-    --color-back-dark-a: hsla(var(--color-base-hue), 20%, 3%, 0.4); 
-    --color-back-light: hsl(var(--color-base-hue), 50%, 95%);
-    --color-text-light: hsl(var(--color-base-hue), 100%, 95%);
-    --color-text-dark: hsl(var(--color-base-hue), 100%, 5%);
+    --color-base-hue:90;
+    --color-back-dark: hsl(var(--color-base-hue), 20%, 29%);
+    --color-back-dark-a: hsla(var(--color-base-hue), 10%, 50%, 0.1); 
+    --color-back-light: hsl(var(--color-base-hue), 90%, 98%);
+    --color-back-light-a: hsl(var(--color-base-hue), 90%, 98%, 0.7);
+  /*   --color-back-lighter: hsl(var(--color-base-hue), 95%, 100%); */
+    --color-back-lighter: white;
+    --color-back-light-hue: hsl(var(--color-base-hue), 50%, 93%);
+    --color-text-light: white;
+   /*  --color-text-light: hsl(var(--color-base-hue), 100%, 100%); */
+    --color-text-dark: hsl(var(--color-base-hue), 90%, 10%);
     --title-font-size:2rem; 
     --title-font-size-sm:1.2rem; 
     --color-danger-hue: calc(var(--color-base-hue) - 180);

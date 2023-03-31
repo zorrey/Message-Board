@@ -1,4 +1,3 @@
-const { name } = require('ejs')
 
 module.exports = function(app, passport) {
 
@@ -7,6 +6,7 @@ const router = express.Router()
 const User = require('../models/user')
 const Discussion = require('../models/discussion')
 const Message = require('../models/message')
+const Issue = require('../models/issue')
 const checkAuthenticated = require('./checkAuth')
 const checkNotAuthenticated = require('./checkNotAuth')
 
@@ -14,6 +14,7 @@ router.get("/", async (req, res) => {
     let loggedIn = false
     let name
     let searchDiscussions = {}
+    let isAdmin = false
     if(req.query.topic != null && req.query.topic !== ""){
         searchDiscussions.topic = new RegExp(req.query.topic, 'i')
     }
@@ -22,8 +23,10 @@ router.get("/", async (req, res) => {
         if(req.isAuthenticated()){
             loggedIn = true
             name = req.user.name
+            if(req.user.role == 'a') isAdmin = true
         }
         res.render("discussions/index", {
+            isAdmin:isAdmin,
             name: name ? name : 'Guest',
             loggedIn:loggedIn,
             discussions: allDiscussions ? allDiscussions : [],
@@ -52,8 +55,8 @@ if(!req.body.topic){
 }else{
     const discussion = new Discussion({
         topic: req.body.topic,
-        article: req.body.article,
-        author: req.user.id
+        text: req.body.text,
+        user: req.user.id
     })
     try{    
                         
@@ -72,17 +75,23 @@ router.get("/:id",  async (req, res) => {
 let loggedIn = false
 //console.log("req.isAuthenticated:   ", req.isAuthenticated())
 if(req.isAuthenticated()) loggedIn = true;
-    let discussion = await Discussion.findById(req.params.id).populate('author','name')
-    let messages = await Message.find({discussion : req.params.id}).populate('user','name').populate('reply.user','name').exec()
-    //let replies = await Reply.find({discussion : req.params.id})
-//console.log(messages)
-//console.log(" discussion.author !== req.user.id",  discussion.author.toString() , req.user.id )
-
+    let discussion = await Discussion.findById(req.params.id).populate('user','name').exec()
+   // let messages = await Message.find({discussion : req.params.id}).populate('user','name').exec()
+//console.log('discussions/show', await discussion.messages)
+//console.log(" discussion.user !== req.user.id",  discussion.user.toString() , req.user.id )
+let message
+let errorMessage
+if(req.query){
+    if(req.query.message) message = req.query.message
+    if(req.query.error) errorMessage = req.query.error
+}
     try{
         res.render('discussions/show', {
             discussion: discussion,
             loggedIn: loggedIn,
-            messages:  messages
+            messages: await discussion.messages,
+            message: message? message:"",
+            errorMessage: errorMessage? errorMessage:""
         })
     }catch(err){
 
@@ -97,7 +106,8 @@ router.get("/:id/edit", checkAuthenticated, async (req, res) => {
 
     const discussion = await Discussion.findById(req.params.id)    
     if(!discussion) return res.redirect('/users/profile')
-    if( discussion.author.toString() != req.user.id ){
+    if( discussion.user.toString() != req.user.id ){
+        if(req.user.role == 'u') 
         return res.redirect('/users/profile')
     }
     try{
@@ -110,11 +120,12 @@ router.get("/:id/edit", checkAuthenticated, async (req, res) => {
 })
 router.put('/:id', checkAuthenticated , async (req , res) => {
     let discussion
+
     try{ 
         discussion = await Discussion.findOneAndUpdate({_id: req.params.id},
             {topic: req.body.topic, 
-            article: req.body.article, 
-            dateActive : new Date() },
+            text: req.body.text, 
+            dateUpdated : new Date() },
             {new: true})
     res.redirect(`/discussions/${discussion.id}`) 
     }catch(e){
@@ -123,6 +134,31 @@ router.put('/:id', checkAuthenticated , async (req , res) => {
 
     }
    // res.send(`update discussion No ${req.params.id}`)
+})
+router.put('/:id/report', checkAuthenticated , async (req , res) => {
+    let discussion
+    let issue
+    let message
+    try{ 
+        discussion = await Discussion.findOneAndUpdate({_id: req.params.id},
+            {reported : true },
+            {new: true})
+        issue = await new Issue({
+            topic: discussion.topic,
+            reason: req.body.reason,
+            reporter: req.user.id,
+            docModel: 'Discussion',
+            post: req.params.id,
+            reportedUser: discussion.user,
+            type: 'Discussion'
+        }).save()
+        message = `Discussion on topic ${discussion.topic} has been reported.`
+    res.redirect(`/discussions/${discussion.id}?message=${message}`) 
+    }catch(e){
+        console.log( 'discussions - report - err', e )
+        message = `Discussion on topic ${discussion.topic} has not been reported. Error reporting.`
+        res.redirect(`/discussions/${discussion.id}?message=${message}`) 
+}
 })
 router.get('/:id/messages', (req, res) => {
     try{
@@ -178,7 +214,7 @@ router.delete('/:id', checkAuthenticated , async (req , res) => {
         errorMessage = `Error Deleting. No discussion ${discussion.topic}. `
         return res.redirect(`/users/profile?error=${errorMessage}`) 
     }
-    if( discussion.author.toString() != req.user.id ){
+    if( discussion.user.toString() != req.user.id ){
         errorMessage = `Error Deleting. You can delete only the discussions started by you.`
         return res.redirect(`/users/profile?error=${errorMessage}`)
     }

@@ -1,10 +1,15 @@
-<h2>Edit User</h2>
-<form action="/users/edit?_method=PUT" method="POST">
-    <div>
+<h2>Edit Profile</h2>
+<hr class="medium"> <br> 
+<form class="grid item log"  action="/users/edit?_method=PUT" method="POST">
+    <div class="grid grid-column-2">
         <label for="name">Name</label>
         <input type="text" id="name" name="name" required />
     </div>
+    <hr class="medium">  
     <%- include('_form_fields') %>
-    <a href="/users/profile">Cancel</a>
-    <button  type="submit" >Update</button>
-</form>
+    <div class="grid grid-column-2">
+        <a class="btn" href="/users/profile">Cancel</a>
+        <button  class="btn btn-primary" type="submit" >Update</button>       
+    </div>  
+</form><br>
+<hr class="medium">  

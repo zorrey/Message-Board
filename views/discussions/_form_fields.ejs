@@ -1,10 +1,8 @@
-<div>
+<div class="form-item">
     <label for="topic">Topic</label>
-    <input type="text" id="topic" name="topic" value="<%= discussion.topic ? discussion.topic : '' %>" placeholder="enter topic - required"  required />
-    
+    <input type="text" id="topic" name="topic" value="<%= discussion.topic ? discussion.topic : '' %>" placeholder="enter topic - required"  required />    
 </div>
-<div>
-    <p>Please share your thoughts on the subject in an article.</p>
-    <label for="article">Article</label>
-    <textarea name="article" id="article" rows="10" ><%= discussion.article %></textarea>
+<div class="form-item">
+    <label for="text">Article - Share your thoughts on the subject.</label>
+    <textarea name="text" id="text" rows="10" ><%= discussion.text %></textarea>
 </div>

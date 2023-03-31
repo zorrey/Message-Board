@@ -2,7 +2,7 @@
 let textSmall = 100
   let textWin = document.querySelectorAll(".text-window")
   textWin.forEach(el=>{
-    if(el.textContent.length < textSmall){
+    if( el.textContent.length < textSmall ){
       el.nextElementSibling.style.display = "none"
     } else {
       let textDisplay = el.textContent.slice(0, textSmall)

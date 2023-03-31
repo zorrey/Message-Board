@@ -1,0 +1,25 @@
+<h2>Register</h2>
+<form action="/admin/register" method="POST">
+    <div>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required />
+    </div>
+    <div>
+        <label for="email" >Email</label>
+        <% if(locals.email){ %>
+        <input type="email" id="email" name="email" value="<%= email %>" placeholder="email required" required />
+        <% } else { %>
+        <input type="email" id="email" name="email" placeholder="email required" required />
+        <% } %>
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required  />
+    </div>
+    <div>
+        <label for="adminSecret">Admin Secret</label>
+        <input type="password" id="adminSecret" name="adminSecret" required />
+    </div>
+    <button type="submit" >Register</button>
+</form>
+<a href="/users/login">login</a>

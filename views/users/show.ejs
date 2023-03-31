@@ -1,40 +1,64 @@
-<h2 class="page-header" >User <%= name ?  name : "" %> </h2>
+<h2 class="page-header" >User <%= user.name ?  user.name : "" %> </h2>
 <div>
-  <h3> Discussions posted by <%= name ?  name : "" %> </h3>
-   <%  discussions.forEach(discussion => { %>
-      <div class="form-row form-row-end btn-row">
-         <div class="form-item author-name"><%= discussion.topic %></div> 
-         <div class="btn-row">
-            <a class="btn btn-primary"  href="/discussions/<%= discussion.id %>">View</a>
-         </div> 
+  <h3> Discussions posted by <%= user.name ?  user.name : "" %> :</h3>
+  <div class="post">
+     <%  discussions.forEach( discussion => { %>
+        <div class="form-row form-row-end btn-row">
+           <div class="form-item"><%= discussion.topic %></div> 
+           <div class="btn-row">
+              <a class="btn btn-primary"  href="/discussions/<%= discussion.id %>">View</a>
+           </div>            
+        </div>      
+        <hr class="medium">  
+     <%  }); %>
+  </div>
+</div>
+<div class="message">
+   <h3> Messages posted by <%= user.name ?  user.name : "" %> </h3>
+   <% if (messages.length > 0) { %>   
+
+      <%  messages.forEach(m => { %>
+         <div class="item grid">
+        
          
-      </div>
-      
-   <%  }); %>
-</div>
-<div>
-   <h3> Messages posted by <%= name ?  name : "" %> </h3>
-
-<%  messages.forEach(m => { %>
-   <div class="form-row form-row-end btn-row">
-  
-      <div class="form-item author-name"><%= m.discussion.topic %> </div> 
-         <div class="message-post">
-            <p class="text-window"> message: <%= m.text %>  </p>
-            <button onclick="readMore(this)" >Read More</button>
-         </div>       
-   </div>
-  <% m.reply.forEach(r => { %>
-      <div class="form-row form-row-end btn-row">
-         <div class="form-item author-name">topic:<%= m.discussion.topic %> reply by: <%= r.user.name %></div> 
-         <div class="message-post">
-            <p class="text-window">reply:  <%= r.text %>  </p>
-            <button onclick="readMore(this)" > Read More </button>
+            <div class="info-small">topic: <%= m.discussion.topic %> message date: <%= m.dateCreated.toLocaleString() %></div>
+               <div class="grid">
+                 
+                  <p class="text-window"> <%= m.text %>  </p>
+                  <button class="btn-sm btn-end" onclick="readMore(this)" >Read More</button>
+               </div>       
+      <% if ( m.reply.length > 0 ) { %>          
+         <div class="grid">
+         <div class="reply hide">
+            <% m.reply.forEach(r => { %>                
+                  <div class="grid">
+                     <div class="info-small">topic:<%= m.discussion.topic %> reply by: <%= r.user.name %> date: <%= r.dateCreated.toLocaleString() %></div> 
+                     <div class="grid">
+                        <p class="text-window"> <%= r.text %>  </p>
+                        <button class="btn-sm btn-end" onclick="readMore(this)" >Read More</button>
+                     </div> 
+                  </div>               
+          <% }) %>
+         </div>
+          <button class="btn-med " onclick="showReplies(this)" >View Replies</button>  
          </div> 
-      </div>
-<% }) %>
-   
-<%  }); %>
 
+      <% }else{ %>
+         <span class="btn-med ">No Replies</span> 
+      <% } %>   
+              
+      </div>  
+      <%  }); %>
+   <% } %>
 </div>
+
+<div class="grid">
+<hr class="dark">   
+<div class="grid  grid-row grid-end">
+<div class="center">Report User:</div>  
+ <%- include('../blocks/reportForm.ejs', {url:  `/users/${user.id}/report`}) %> 
+</div>
+</div>
+
 <%- include('../blocks/textMore') %>
+<%- include('../blocks/showReplies.ejs') %>
