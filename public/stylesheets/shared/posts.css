@@ -1,7 +1,9 @@
 
  :root{  
     --grid-width-replies: 250px; 
-    --text-info-sm: 0.6rem 
+    --text-info-sm: 0.6rem ;
+    --post-cover-width: 200px;
+    --post-cover-aspect-ratio: 1;
 } 
 
 .post{
@@ -37,6 +39,31 @@
     gap: 0.1rem;
     margin: 0.3rem 0 ;
 }
+.mesh{
+    display: grid;
+    justify-content: center;
+    grid-gap: 1rem;
+    grid-template-columns: repeat(auto-fill, var(--post-cover-width));
+}
+.post-cover{
+    width: var(--post-cover-width);
+    height: calc(var(--post-cover-width) / var(--post-cover-aspect-ratio));
+    background-color:white ;
+    border:1px solid hsla(var(--color-base-hue), 50%, 70%, 0.6) ;
+    border-radius: 0px;
+}
+.post-cover:hover{
+    background-color: var(--color-back-dark);
+    color: white;
+}
+.post-topic{
+    position: absolute;  
+    left:0;
+    width:90%;
+    bottom: 40px; 
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+}
 .grid-column-2{
     grid-template-columns: 40% 60%;
 }
@@ -53,4 +80,9 @@
     display: flex;
     align-items: center;
     text-align: center;
+}
+.tile{   
+    position: relative;   
+    margin: 0;
+    padding: 0;
 }

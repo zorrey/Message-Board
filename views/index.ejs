@@ -1,1 +1,5 @@
-<h1> <%= locals.name ? locals.name : "Guest" %>, <br> Welcome to Agora, The Free Forum.</h1>
+<h1> <%= locals.name ? locals.name : "Guest" %>, <br> Welcome to Agora.</h1>
+<h3 class="page-header" >Recently Added</h3>
+    <%- include('blocks/postGrid.ejs' , 
+    { discussions : discussions 
+    }) %>

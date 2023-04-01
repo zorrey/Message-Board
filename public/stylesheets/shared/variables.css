@@ -1,5 +1,5 @@
 :root{
-    --color-base-hue:90;
+    --color-base-hue:250;
     --color-back-dark: hsl(var(--color-base-hue), 20%, 29%);
     --color-back-dark-a: hsla(var(--color-base-hue), 10%, 50%, 0.1); 
     --color-back-light: hsl(var(--color-base-hue), 90%, 98%);
@@ -9,8 +9,8 @@
     --color-back-light-hue: hsl(var(--color-base-hue), 50%, 93%);
     --color-text-light: white;
    /*  --color-text-light: hsl(var(--color-base-hue), 100%, 100%); */
-    --color-text-dark: hsl(var(--color-base-hue), 90%, 10%);
-    --title-font-size:2rem; 
+    --color-text-dark: hsl(var(--color-base-hue), 80%, 20%);
+    --title-font-size:1.8rem; 
     --title-font-size-sm:1.2rem; 
     --color-danger-hue: calc(var(--color-base-hue) - 180);
 }

@@ -3,9 +3,10 @@ module.exports = function(app, passport) {
 const express = require('express')
 const User = require('../models/user')
 const router= express.Router()
+const Discussion = require('../models/discussion')
 
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     let loggedIn = false
     let name
     let message
@@ -22,13 +23,13 @@ router.get('/', (req, res) => {
         name = req.user.name
         if(req.user.role == 'a') isAdmin = true
     }
-    
-
+    const discussions= await Discussion.find({}).sort({dateCreated: 'desc'}).limit(5).exec()
    // let name = "Guest"
     res.render("index" , 
     {   isAdmin: isAdmin,
         loggedIn: loggedIn , 
         name : name ? name : "Guest" ,
+        discussions: discussions,
         errorMessage: errorMessage ? errorMessage :"",
         message: message ? message :""
  } ) 
