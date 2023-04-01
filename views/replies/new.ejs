@@ -1,9 +1,11 @@
-<div>Reply for message: </div>
+<div>Reply for comment: </div>
 <div><%= messagePost.text %></div>
 <h2>New Reply</h2>
 
-<form action="/messages/<%= messagePost.id %>/replies" method="POST" >  
+<form class="form-item"  action="/messages/<%= messagePost.id %>/replies" method="POST" >  
     <%- include('_form_fields') %>
-    <a href="/discussions/<%= messagePost.discussion.id %>">Cancel</a>
-    <button  type="submit" >Create</button>
+    <div class="btn-row-end" >
+        <a class="btn" href="/discussions/<%= messagePost.discussion.id %>">Cancel</a>
+        <button class="btn btn-primary"  type="submit" >Create</button>
+    </div>
 </form>

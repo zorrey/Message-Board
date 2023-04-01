@@ -8,11 +8,13 @@
            <div class="btn-row">
               <a class="btn btn-primary"  href="/discussions/<%= discussion.id %>">View</a>
               <a class="btn btn-primary"  href="/discussions/<%= discussion.id %>/edit">Edit</a>
-              <%- include('../blocks/deleteForm.ejs', { url: `/discussions/${discussion.id}`}) %>
-              <% if(discussion.reported == true){ %>
-               <div class="reported"> Reported </div>
-           <% } %>
+              <%- include('../blocks/deleteForm.ejs', { url: `/discussions/${discussion.id}`}) %>         
            </div>             
+        </div>
+        <div class="form-row end">
+         <% if(discussion.reported == true){ %>
+            <div class="reported"> Reported </div>
+        <% } %>
         </div>
         
      <%  }); %>   

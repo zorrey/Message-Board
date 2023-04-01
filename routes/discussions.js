@@ -89,6 +89,7 @@ if(req.query){
         res.render('discussions/show', {
             discussion: discussion,
             loggedIn: loggedIn,
+            user: req.user? req.user.id : "",
             messages: await discussion.messages,
             message: message? message:"",
             errorMessage: errorMessage? errorMessage:""

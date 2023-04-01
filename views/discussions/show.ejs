@@ -1,5 +1,9 @@
-
-<% showClass = locals.loggedIn ? 'show' : '' %>
+<% if(locals.loggedIn) { %>
+  <% if( user == discussion.user.id) { %>
+  <%  showClass = 'show' %>
+  <% } else { showClass = '' } %>
+<% } else { showClass = '' } %>
+  
 <% showReply = locals.showReply ? 'show' : '' %>
 
 <div  class="post">
@@ -30,7 +34,12 @@
  <% if (messages.length > 0) { %>       
     <div class="message">
       <h3 >Messages: </h3> 
-      <% messages.forEach(  message => { %> 
+      <% messages.forEach(  message => { %>  
+        
+  <% if( locals.user == message.user.id) { %>
+  <%  showMessage = 'show' %>
+  <% } else { showMessage = '' } %>
+    
         <div class="item grid">
           <div class="info-small">Message written by: <%= message.user.name %> <br> date: <%=  message.dateCreated.toLocaleString() %></div>
           <div class="grid" > 
@@ -38,6 +47,15 @@
               <button class="btn-sm btn-end" onclick="readMore(this)" >Read More</button>
               <hr>
               <div class="grid grid-end">
+                <div class="grid grid-row">
+                  <div class="btn-hidden<%=  showMessage %>">   
+                  <a class="btn btn-row btn-primary" href="/messages/<%= message.id %>/edit">Edit</a>        
+                  </div>
+                  <div class="btn-hidden<%=  showMessage %>">     
+                    <%- include('../blocks/deleteForm.ejs', 
+                    {url: `/messages/${message.id}`}) %>         
+                  </div>
+                 </div>  
                 <a class="btn btn-primary " href="/messages/<%= message.id %>/replies/new">New Reply</a>
                <%- include('../blocks/reportForm.ejs', {url:  `/messages/${message.id}/report`}) %>   
              </div>
@@ -49,14 +67,17 @@
           <div class="reply hide">
           <h4>Replies:</h4>
             <% message.reply.forEach( reply => { %>
-            <div class="info-small">
+            <div class="info-small" >
               Reply Written by: <%= reply.user.name %> <br> 
               date: <%= reply.dateCreated.toLocaleString() %>
             </div>  
             <div class="grid" >   
             <p class="text-window"> <%= reply.text %></p>
             <button class="btn-sm btn-end" onclick="readMore(this)" >Read More</button>
-            <%- include('../blocks/reportForm.ejs', {url:  `/messages/${message.id}/replies/${reply.id}/report`}) %>
+             <div class="grid grid-end">
+                <%- include('../blocks/reportForm.ejs', {url:  `/messages/${message.id}/replies/${reply.id}/report`}) %>
+             </div> 
+
             </div>          
         <%  }) %>
           </div>   <!-- reply -->

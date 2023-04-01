@@ -28,11 +28,6 @@ app.set('view engine', 'ejs')
 app.set('views', __dirname + '/views')
 app.set('layout', 'layouts/layout')
 
-const initializePassport = require('./passport-config')
-initializePassport(passport, 
-    async (email) => { return await User.findOne({email: email} ) } ,
-    async (id) => { return await User.findById(id) }
-)
 
 app.use(session({
     name: "session-id",
@@ -49,6 +44,12 @@ app.use(express.static('public'))
 
 app.use(passport.initialize())
 app.use(passport.session())
+
+const initializePassport = require('./passport-config')
+initializePassport(passport, 
+    async (email) => { return await User.findOne({email: email} ) } ,
+    async (id) => { return await User.findById(id) }
+)
 app.use(flash())
 app.use(methodOverride('_method'))
 //setting up database
