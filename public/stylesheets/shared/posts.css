@@ -26,7 +26,7 @@
     background-color: var(--color-back-light);
     color: black;
     padding: 0.5rem;
-    width: 85%;
+    width:  85%;
     justify-self: flex-end;
 }
 .info-small{
@@ -85,4 +85,21 @@
     position: relative;   
     margin: 0;
     padding: 0;
+}
+@media only screen and (max-width: 450px) {
+  
+.reply{
+    width:  95%;
+}
+.grid{
+    display: flex;
+    flex-direction: column;    
+    flex-wrap: wrap;
+}
+.log {
+    width: auto;
+}
+.log input{
+    width: 100%;
+}
 }
