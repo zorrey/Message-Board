@@ -1,3 +1,4 @@
+
 <h2 class="page-header" >User <%= user.name ?  user.name : "" %> </h2>
 <div>
   <h3> Discussions posted by <%= user.name ?  user.name : "" %> :</h3>
@@ -14,16 +15,16 @@
   </div>
 </div>
 <div class="message">
-   <h3> Messages posted by <%= user.name ?  user.name : "" %> </h3>
+   <h3> Comments or replies posted by <%= user.name ?  user.name : "" %> </h3>
    <% if (messages.length > 0) { %>   
-
       <%  messages.forEach(m => { %>
-         <div class="item grid">
-        
-         
-            <div class="info-small">topic: <%= m.discussion.topic %> message date: <%= m.dateCreated.toLocaleString() %></div>
-               <div class="grid">
-                 
+         <div class="item grid">        
+            <div class="info-small">
+               topic: <%= m.discussion.topic %>, 
+               message date: <%= m.dateCreated.toLocaleString() %>, 
+            by:  <span class="<%= m.user.name == user.name? 'user' : '' %> " ><%= m.user.name  %>  </span>              
+            </div>
+               <div class="grid">                 
                   <p class="text-window"> <%= m.text %>  </p>
                   <button class="btn-sm btn-end" onclick="readMore(this)" >Read More</button>
                </div>       
@@ -32,7 +33,10 @@
          <div class="reply hide">
             <% m.reply.forEach(r => { %>                
                   <div class="grid">
-                     <div class="info-small">topic:<%= m.discussion.topic %> reply by: <%= r.user.name %> date: <%= r.dateCreated.toLocaleString() %></div> 
+                     <div class="info-small">
+                        topic:<%= m.discussion.topic %>, 
+                     reply by:   <span class="<%= r.user.name == user.name? 'user' : '' %> " > <%= r.user.name  %>  </span>,                       
+                        date: <%= r.dateCreated.toLocaleString() %></div> 
                      <div class="grid">
                         <p class="text-window"> <%= r.text %>  </p>
                         <button class="btn-sm btn-end" onclick="readMore(this)" >Read More</button>

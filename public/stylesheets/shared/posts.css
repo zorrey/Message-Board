@@ -7,8 +7,7 @@
 } 
 
 .post{
-    background-color: white;
-    color: black;    
+    background-color: white;   
     padding: 0.5rem;
 }
 .item{
@@ -19,12 +18,10 @@
 .message{
     display: grid;
     background-color: var(--color-back-light-hue);
-    color: black;
     padding: 0.5rem;
 }
 .reply{
     background-color: var(--color-back-light);
-    color: black;
     padding: 0.5rem;
     width:  85%;
     justify-self: flex-end;
@@ -85,6 +82,10 @@
     position: relative;   
     margin: 0;
     padding: 0;
+}
+.user{
+    font-size: 0.8rem;
+    color:brown;
 }
 @media only screen and (max-width: 450px) {
   
